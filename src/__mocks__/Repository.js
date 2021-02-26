@@ -26,6 +26,7 @@ export default jest.fn().mockImplementation(() => {
     find,
     findBy,
     query,
+    executeSql,
     _sanitize
   }
 })

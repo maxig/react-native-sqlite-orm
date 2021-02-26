@@ -20,6 +20,12 @@ export default class Repository {
     return this.databaseLayer.insert(obj).then(res => DataTypes.toModelValue(this.columnMapping, res))
   }
 
+  // Returns Promise to be resolved as success or failed.
+  insertOrUpdateBulk(_objs) {
+    const objs = _objs.map(_obj => DataTypes.toDatabaseValue(this.columnMapping, this._sanitize(_obj)))
+    return this.databaseLayer.bulkInsertOrReplace(objs)
+  }
+
   update(_obj) {
     const obj = DataTypes.toDatabaseValue(this.columnMapping, this._sanitize(_obj))
     return this.databaseLayer.update(obj)
@@ -43,6 +49,10 @@ export default class Repository {
 
   query(options = {}) {
     return this.databaseLayer.query(options).then(res => res.map(p => DataTypes.toModelValue(this.columnMapping, p)))
+  }
+
+  executeSql(rawSql) {
+    return this.databaseLayer.executeSql(rawSql)
   }
 
   _sanitize(obj) {

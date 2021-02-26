@@ -50,8 +50,16 @@ export default class BaseModel {
     return this.repository.insert(obj).then(res => new this(res))
   }
 
+  static createBulk(objs) {
+    return this.repository.insertOrUpdateBulk(objs)
+  }
+
   static update(obj) {
     return this.repository.update(obj).then(res => new this(res))
+  }
+
+  update(props) {
+    this.setProperties(props);
   }
 
   save() {
@@ -86,6 +94,14 @@ export default class BaseModel {
     return this.repository
       .findBy(where)
       .then(res => (res ? new this(res) : res))
+  }
+
+  static all() {
+    return this.query({ columns: '*' })
+  }
+
+  static executeSql(rawSql) {
+    return this.repository.executeSql(rawSql)
   }
 
   /**
