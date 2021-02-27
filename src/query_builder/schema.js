@@ -76,4 +76,4 @@ export function dropTable(tableName) {
   return `DROP TABLE IF EXISTS ${tableName};`
 }
 
-export default { createTable, dropTable, updateTableSchema }
+export default { createTable, dropTable }

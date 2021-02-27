@@ -96,6 +96,20 @@ export default class BaseModel {
       .then(res => (res ? new this(res) : res))
   }
 
+  static findOrCreateBy(where, otherProps = {}) {
+    return new Promise((resolve, reject) => {
+      this.findBy(where)
+        .then(res => {
+          if (res) {
+            resolve(res)
+          } else {
+            this.create(new this(Object.assign(where, otherProps))).then(resolve).catch(reject)
+          }
+        })
+        .catch(reject)
+    })
+  }
+
   static all() {
     return this.query({ columns: '*' })
   }
@@ -108,6 +122,6 @@ export default class BaseModel {
    * @param {columns: '*', page: 1, limit: 30, where: {}, order: 'id DESC'} options
    */
   static query(options) {
-    return this.repository.query(options)
+    return this.repository.query(options).then(rows => (rows ? rows.map(res => new this(res)) : []))
   }
 }
