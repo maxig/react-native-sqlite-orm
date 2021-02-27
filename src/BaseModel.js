@@ -1,4 +1,5 @@
 import Repository from './Repository'
+import DataTypes from './DataTypes'
 
 const isFunction = p =>
   Object.prototype.toString.call(p) === '[object Function]'
@@ -12,7 +13,7 @@ export default class BaseModel {
     const cm = this.constructor.columnMapping
     Object.keys(cm).forEach(k => {
       if (props[k] !== undefined) {
-        this[k] = props[k]
+        this[k] = DataTypes.propertyToModelValue(cm[k].type, props[k]);
       } else if (isFunction(cm[k].default)) {
         this[k] = cm[k].default()
       } else {
