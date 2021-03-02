@@ -4,11 +4,11 @@ import DatabaseLayer from './DatabaseLayer'
 export default class Repository {
   constructor(database, tableName, columnMapping) {
     this.columnMapping = columnMapping
-    this.databaseLayer = new DatabaseLayer(database, tableName)
+    this.databaseLayer = new DatabaseLayer(database, tableName, columnMapping)
   }
 
   createTable() {
-    return this.databaseLayer.createTable(this.columnMapping)
+    return this.databaseLayer.createTable()
   }
 
   dropTable() {

@@ -67,7 +67,7 @@ export default class BaseModel {
     if (this.id) {
       return this.constructor.repository
         .update(this)
-        .then(res => this.setProperties(res))
+        .then(_ => this)
     } else {
       return this.constructor.repository
         .insert(this)

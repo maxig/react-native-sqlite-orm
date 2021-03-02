@@ -1,9 +1,10 @@
 import QueryBuilder from './query_builder'
 
 export default class DatabaseLayer {
-  constructor(database, tableName) {
+  constructor(database, tableName, columnMapping) {
     this.database = database
     this.tableName = tableName
+    this.columnMapping = columnMapping
   }
 
   async executeBulkSql(sqls, params = []) {
@@ -33,8 +34,8 @@ export default class DatabaseLayer {
       .catch(error => { throw error })
   }
 
-  createTable(columnMapping) {
-    const sql = QueryBuilder.createTable(this.tableName, columnMapping)
+  createTable() {
+    const sql = QueryBuilder.createTable(this.tableName, this.columnMapping)
     return this.executeSql(sql).then(() => true)
   }
 
@@ -90,7 +91,7 @@ export default class DatabaseLayer {
 
   query(options = {}) {
     const sql = QueryBuilder.query(this.tableName, options)
-    const params = Object.values(options.where || {})
+    const params = QueryBuilder.sanitizeQueryParams(options.where, this.columnMapping)
     return this.executeSql(sql, params).then(({ rows }) => rows)
   }
 }

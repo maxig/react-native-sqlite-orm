@@ -45,7 +45,7 @@ function propertyToModelValue(type, value) {
     case types.INTEGER:
     case types.FLOAT:
     case types.NUMERIC:
-      return Number(value || undefined) || null
+      return (value?.toString()?.length) ? Number(value) : null
     default:
       return value
   }

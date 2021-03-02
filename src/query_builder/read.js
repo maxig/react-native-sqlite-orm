@@ -1,3 +1,5 @@
+import DataTypes from '../DataTypes'
+
 const defaultOptions = {
   columns: '*',
   page: null,
@@ -57,14 +59,13 @@ export function propertyOperation(statement) {
     gteq: '>=',
     cont: 'LIKE'
   }
-  const pieces = statement.split('_')
-  const operation = pieces.pop()
-  const property = pieces.join('_')
+  const [property, operation] = _extractKeyAndOperation(statement)
   if (!operations.hasOwnProperty(operation)) {
     throw new Error(
       'Operation not found, use (eq, neq, lt, lteq, gt, gteq, cont)'
     )
   }
+
   return `${property} ${operations[operation]}`
 }
 
@@ -74,4 +75,22 @@ export function queryWhere(options) {
   return list.length > 0 ? `WHERE ${list.join(' AND ')}` : ''
 }
 
-export default { find, query }
+export function sanitizeQueryParams(params = {}, cm) {
+  params =
+    Object.entries(params).reduce((o, p) => {
+      o[_extractKeyAndOperation(p[0])[0]] = p[1]
+      return o
+    }, {})
+
+  return Object.values(DataTypes.toDatabaseValue(cm, params))
+}
+
+function _extractKeyAndOperation(keyWithOperation) {
+  const pieces = keyWithOperation.split('_')
+  const operation = pieces.pop()
+  const property = pieces.join('_')
+
+  return [property, operation]
+}
+
+export default { find, query, sanitizeQueryParams }
